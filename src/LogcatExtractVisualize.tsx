@@ -12,7 +12,6 @@ type LogcatExtractVisualizeProps = {
 type LogcatExtractVisualizeState = {
   resourceState: State<string>,
   maxLines: number,
-  log: string
 }
 
 class Logcat {
@@ -27,17 +26,17 @@ class Logcat {
 class LogcatExtractVisualize extends React.Component<LogcatExtractVisualizeProps,LogcatExtractVisualizeState> {
   state: LogcatExtractVisualizeState = {
     resourceState: {state:'loading'}, 
-    maxLines:60,
-    log: ''
+    maxLines:60
   }
   
   componentDidMount() {
     const zip = this.props.bugreportZip
     const logd = zip.folder('FS/data/misc/logd/')
+    // This check doesn't seem to work
     if (logd == null) {
       this.setState({resourceState: {state:'failed', message:'Unable to find logcat files'}})
     } else {
-      this.loadLogcatContents(logd)
+      this.loadLogcatContents(logd!!)
     }
   }
 
@@ -51,19 +50,21 @@ class LogcatExtractVisualize extends React.Component<LogcatExtractVisualizeProps
     });
     // Reverse sort name of files to get proper timeline
     const sortedLogcatFiles = logcatFiles.sort((a,b) => b.name.localeCompare(a.name))
+
+    // We need to make sure we load the logcats in sequential order.
+    // To do so we create a chain of promises that accumulate the contents of each logcat.
     var contentPromise: Promise<Logcat> = Promise.resolve(new Logcat('empty',''))
     sortedLogcatFiles.forEach((logcatFile) => {
-      contentPromise = contentPromise.then((logcat) => {
+      contentPromise = contentPromise.then(async (logcat) => {
         console.log('Concatenating log from ' + logcat.filename)
-        return logcatFile.async('string')
-        .then((contents)=>{return new Logcat(logcatFile.name, logcat.contents.concat(contents))})
+        const contents = await logcatFile.async('string');
+        return new Logcat(logcatFile.name, logcat.contents.concat(contents));
       })
     })
     contentPromise.then((logcat) => {
       console.log('Concatenating last log: ' + logcat.filename)
       this.setState((prevState) => ({
         resourceState: {state:'success', value:logcat.contents},
-        log: prevState.log.concat(logcat.contents)
       }))})
   }
 
@@ -79,21 +80,24 @@ class LogcatExtractVisualize extends React.Component<LogcatExtractVisualizeProps
           <h2>Loading logs...</h2>
         }
         {resourceState.state === 'success' && 
-        <div>
-          <h2>{this.props.bugreportZip.name}</h2>
-          <label>Number of lines for editor: </label>
-          <input type="number" value={this.state.maxLines} onChange={this.onMaxLinesChanged}/>
-          <AceEditor 
-            value={this.state.log} width="100%"
-            maxLines={this.state.maxLines} theme="solarized_dark"
-            setOptions={{
-              showGutter: false,
-              showPrintMargin: false,
-              readOnly: true,
-              scrollPastEnd: true, 
-          }}/>
-        </div>
-      }
+          <div>
+            <h2>{this.props.bugreportZip.name}</h2>
+            <label>Number of lines for editor: </label>
+            <input type="number" value={this.state.maxLines} onChange={this.onMaxLinesChanged}/>
+            <AceEditor 
+              value={resourceState.value} width="100%"
+              maxLines={this.state.maxLines} theme="solarized_dark"
+              setOptions={{
+                showGutter: false,
+                showPrintMargin: false,
+                readOnly: true,
+                scrollPastEnd: true, 
+            }}/>
+          </div>
+        }
+        {resourceState.state === 'failed' && 
+        <h2>No logcat files found inside {this.props.bugreportZip.name}</h2>
+        }
       </div>
       )
   }
