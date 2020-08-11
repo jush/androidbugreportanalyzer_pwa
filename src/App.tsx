@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import SelectFileForm from './SelectFileForm';
+import BugreportAnalyzer from './BugreportAnalyzer';
 
 type AppState = {
   file: File | null
@@ -17,7 +18,7 @@ class App extends React.Component</*No props*/{}, AppState> {
     if (!hasFile) {
       contents = <SelectFileForm onFileSelected={this.onFileSelected}/>
     } else {
-      contents = <div>File selected: {this.state.file?.name}</div>
+      contents = <BugreportAnalyzer file={this.state.file!!}/>
     }
     return (
       <div className="App">
