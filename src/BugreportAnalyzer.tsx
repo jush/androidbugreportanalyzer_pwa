@@ -27,7 +27,7 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
       const logdFileNames: string[] = []
       logd.forEach((path, file) => {
         console.log('Logd file: ' + path)
-        if (path.startsWith('logcat')) {
+        if (path.startsWith('logcat') && path !== 'logcat.id') {
           logdFileNames.push(path)
         }
       });
@@ -65,6 +65,7 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
 
   render() {
     return (
+
       <div>
         {this.state.loading && 
           <h2>Loading logs...</h2>
@@ -77,7 +78,16 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
           <label>Number of lines for editor: </label>
           <input type="number" value={this.state.maxLines} onChange={this.onMaxLinesChanged}/>
         </div>
-        <AceEditor value={this.state.log} readOnly={true} width="100%" showPrintMargin={false} maxLines={this.state.maxLines} theme="solarized_dark"/>
+        <AceEditor 
+          value={this.state.log} width="100%"
+          maxLines={this.state.maxLines} theme="solarized_dark"
+          setOptions={{
+            showGutter: false,
+            showPrintMargin: false,
+            readOnly: true,
+            scrollPastEnd: true,
+            
+          }}/>
       </div>
       )
   }
