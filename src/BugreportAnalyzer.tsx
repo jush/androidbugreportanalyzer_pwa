@@ -1,30 +1,33 @@
-import React from 'react';
-import JSZip from 'jszip';
-import LogcatExtractVisualize from './LogcatExtractVisualize'
+import React from "react";
+import JSZip from "jszip";
+import LogcatExtractVisualize from "./LogcatExtractVisualize";
 
 type BugreportAnalyzerProps = {
-  file: File,
-  onReset: () => void
-}
+  file: File;
+  onReset: () => void;
+};
 
 type BugreportAnalyzerState = {
-  bugreportZip: JSZip | null
-}
+  bugreportZip: JSZip | null;
+};
 
-class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, BugreportAnalyzerState> {
+class BugreportAnalyzer extends React.Component<
+  BugreportAnalyzerProps,
+  BugreportAnalyzerState
+> {
   state: BugreportAnalyzerState = {
-    bugreportZip: null
-  }
+    bugreportZip: null,
+  };
 
   componentDidMount() {
-    const zipPromise = JSZip.loadAsync(this.props.file)
-    zipPromise.then((zip)=> {
-      this.setState({bugreportZip: zip})
-    })
-    
+    const zipPromise = JSZip.loadAsync(this.props.file);
+    zipPromise.then((zip) => {
+      this.setState({ bugreportZip: zip });
+    });
+
     zipPromise.catch((reason: any) => {
-      console.error('Failed to load zip ' + reason)
-    })
+      console.error("Failed to load zip " + reason);
+    });
   }
 
   render() {
@@ -32,16 +35,16 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
       <div>
         <h2>{this.props.file.name}</h2>
         <button onClick={this.props.onReset}>Change file</button>
-        {this.state.bugreportZip != null &&
-          <LogcatExtractVisualize bugreportZip={this.state.bugreportZip}/>
-        }
+        {this.state.bugreportZip != null && (
+          <LogcatExtractVisualize bugreportZip={this.state.bugreportZip} />
+        )}
       </div>
-      )
+    );
   }
 
-  printFile(relativePath:String, zip: JSZip.JSZipObject) {
-    console.log('Zip path: ' + relativePath)  
+  printFile(relativePath: String, zip: JSZip.JSZipObject) {
+    console.log("Zip path: " + relativePath);
   }
 }
 
-export default BugreportAnalyzer
+export default BugreportAnalyzer;

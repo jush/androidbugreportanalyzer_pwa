@@ -1,17 +1,17 @@
-export default State
+export default State;
 
 type LoadingState = {
-  state: 'loading'
-}
+  state: "loading";
+};
 
 type FailedState = {
-  state: 'failed',
-  message: string
-}
+  state: "failed";
+  message: string;
+};
 
 type SuccessState<T> = {
-  state: 'success',
-  value: T
-}
+  state: "success";
+  value: T;
+};
 
-type State<T> = LoadingState | FailedState | SuccessState<T>
+type State<T> = LoadingState | FailedState | SuccessState<T>;

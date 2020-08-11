@@ -1,12 +1,12 @@
 body {
   background-color: black;
-  color: beige
+  color: beige;
 }
 
 .App {
   text-align: center;
 }
-textarea{
+textarea {
   width: 100%;
 }
 pre {
