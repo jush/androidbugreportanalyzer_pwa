@@ -1,5 +1,8 @@
 import React from 'react';
 import JSZip from 'jszip';
+import AceEditor from "react-ace";
+import 'ace-builds/src-min-noconflict/ext-searchbox';
+import "ace-builds/src-noconflict/theme-solarized_dark";
 
 type BugreportAnalyzerProps = {
   file: File
@@ -64,12 +67,7 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
     );
     return (
       <div>File selected: {this.props.file.name}
-        <div>
-          <ul>{logFiles}</ul>
-        </div>
-        <pre>
-          {this.state.log}
-        </pre>
+        <AceEditor value={this.state.log} readOnly={true} width="100%" showPrintMargin={false} maxLines={50} theme="solarized_dark"/>
       </div>
       
       )
