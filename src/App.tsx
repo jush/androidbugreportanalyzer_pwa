@@ -9,8 +9,13 @@ type AppState = {
 
 class App extends React.Component</*No props*/{}, AppState> {
   state: AppState = {file: null}
+
   onFileSelected = (selectedFile: File): void => {
     this.setState({file: selectedFile})
+  }
+
+  onReset = (): void => {
+    this.setState({file: null})
   }
   render() {
     const hasFile = this.state.file != null
@@ -18,7 +23,7 @@ class App extends React.Component</*No props*/{}, AppState> {
     if (!hasFile) {
       contents = <SelectFileForm onFileSelected={this.onFileSelected}/>
     } else {
-      contents = <BugreportAnalyzer file={this.state.file!!}/>
+      contents = <BugreportAnalyzer file={this.state.file!!} onReset={this.onReset}/>
     }
     return (
       <div className="App">

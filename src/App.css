@@ -1,7 +1,10 @@
-.App {
-  text-align: center;
+body {
   background-color: black;
   color: beige
+}
+
+.App {
+  text-align: center;
 }
 textarea{
   width: 100%;

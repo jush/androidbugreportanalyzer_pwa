@@ -33,12 +33,12 @@ class SelectFileForm extends React.Component<SelectFileFormProps, SelectFileForm
     return (
       <form onSubmit={this.handleSubmit}>
         <div>
-        <label>
-          Please submit bugreport zip file:
-          <input type="file" value={this.state.value} onChange={this.handleChange} />
-        </label>
+        <h2>
+          Please select bugreport zip file:
+        </h2>
+        <input type="file" value={this.state.value} onChange={this.handleChange} />
+        <input type="submit" value="Analyze" />
         </div>
-        <input type="submit" value="Submit" />
       </form>
     );
   }

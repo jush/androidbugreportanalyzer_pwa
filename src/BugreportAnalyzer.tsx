@@ -5,16 +5,18 @@ import 'ace-builds/src-min-noconflict/ext-searchbox';
 import "ace-builds/src-noconflict/theme-solarized_dark";
 
 type BugreportAnalyzerProps = {
-  file: File
+  file: File,
+  onReset: () => void
 }
 
 type BugreportAnalyzerState = {
   logDFileNames: string[],
-  log: string
+  log: string,
+  maxLines: number
 }
 
 class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, BugreportAnalyzerState> {
-  state: BugreportAnalyzerState = {logDFileNames:[], log:''}
+  state: BugreportAnalyzerState = {logDFileNames:[], log:'', maxLines:60}
   componentDidMount() {
     const zipPromise = JSZip.loadAsync(this.props.file)
     zipPromise.then((zip)=> {
@@ -60,16 +62,22 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
       console.error('Failed to load zip ' + reason)
     })
   }
+  onMaxLinesChanged = (e: React.FormEvent<HTMLInputElement>): void => {
+    this.setState({maxLines: e.currentTarget.valueAsNumber})
+  }
 
   render() {
-    const logFiles = this.state.logDFileNames.map((logDFilename) => 
-      <li key={logDFilename}>{logDFilename}</li>
-    );
     return (
-      <div>File selected: {this.props.file.name}
-        <AceEditor value={this.state.log} readOnly={true} width="100%" showPrintMargin={false} maxLines={50} theme="solarized_dark"/>
+      <div>
+        <h2>{this.props.file.name}
+        <button onClick={this.props.onReset}>Change file</button>
+        </h2>
+        <div>
+          <label>Number of lines for editor: </label>
+          <input type="number" value={this.state.maxLines} onChange={this.onMaxLinesChanged}/>
+        </div>
+        <AceEditor value={this.state.log} readOnly={true} width="100%" showPrintMargin={false} maxLines={this.state.maxLines} theme="solarized_dark"/>
       </div>
-      
       )
   }
 
