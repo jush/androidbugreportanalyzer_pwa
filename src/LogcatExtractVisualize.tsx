@@ -48,6 +48,10 @@ class LogcatExtractVisualize extends React.Component<LogcatExtractVisualizeProps
         logcatFiles.push(file)
       }
     });
+    if (logcatFiles.length === 0) {
+      this.setState({resourceState: {state:'failed', message:'Unable to find logcat files'}})
+      return
+    }
     // Reverse sort name of files to get proper timeline
     const sortedLogcatFiles = logcatFiles.sort((a,b) => b.name.localeCompare(a.name))
 
@@ -96,7 +100,7 @@ class LogcatExtractVisualize extends React.Component<LogcatExtractVisualizeProps
           </div>
         }
         {resourceState.state === 'failed' && 
-        <h2>No logcat files found inside {this.props.bugreportZip.name}</h2>
+        <h2>{resourceState.message}</h2>
         }
       </div>
       )
