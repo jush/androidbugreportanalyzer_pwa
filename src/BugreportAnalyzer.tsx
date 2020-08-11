@@ -12,11 +12,12 @@ type BugreportAnalyzerProps = {
 type BugreportAnalyzerState = {
   logDFileNames: string[],
   log: string,
-  maxLines: number
+  maxLines: number,
+  loading: boolean
 }
 
 class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, BugreportAnalyzerState> {
-  state: BugreportAnalyzerState = {logDFileNames:[], log:'', maxLines:60}
+  state: BugreportAnalyzerState = {logDFileNames:[], log:'', maxLines:60, loading: true}
   componentDidMount() {
     const zipPromise = JSZip.loadAsync(this.props.file)
     zipPromise.then((zip)=> {
@@ -33,27 +34,23 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
       // Reverse sort name of files to get proper timeline
       const sortedLogdFileNames = logdFileNames.sort((a,b) => b.localeCompare(a))
       this.setState({logDFileNames: sortedLogdFileNames})
-      var contentPromises: Promise<string>[] = []
+      var contentPromises: Promise<void>[] = []
       sortedLogdFileNames.forEach((value, idx) =>{
-        console.log('LogD: ' + value)
+        console.log('loading log congtents in ' + value)
         const readContents = logd.file(value)!!.async("string").then((contents) => {
-          /*
           this.setState((prevState, props) => ({
             log: prevState.log.concat(contents)
           }))
-          */
-         console.log('processing ' + value)
-         return contents
+          console.log(value + ' loaded')
         })
         contentPromises.push(readContents)
       })
-      Promise.all(contentPromises).then((values:string[])=> {
-        var content:string = ''
-        values.forEach((contents)=> {
-          content+=contents
-        })
+
+      // Wait that all content is loaded and set loading to false.
+      // There's probably a better way to do it
+      Promise.all(contentPromises).then(()=> {
         this.setState({
-          log: content
+          loading: false
         })
       })
     })
@@ -69,9 +66,13 @@ class BugreportAnalyzer extends React.Component<BugreportAnalyzerProps, Bugrepor
   render() {
     return (
       <div>
-        <h2>{this.props.file.name}
+        {this.state.loading && 
+          <h2>Loading logs...</h2>
+        }
+        {!this.state.loading && 
+          <h2>{this.props.file.name}</h2>
+        }
         <button onClick={this.props.onReset}>Change file</button>
-        </h2>
         <div>
           <label>Number of lines for editor: </label>
           <input type="number" value={this.state.maxLines} onChange={this.onMaxLinesChanged}/>
