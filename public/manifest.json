@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Bugreport Analyzer",
+  "name": "Android Bugreport Analyzer",
   "icons": [
     {
       "src": "favicon.ico",
