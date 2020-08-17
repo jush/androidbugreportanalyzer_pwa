@@ -1,0 +1,20 @@
+.LTV_container {
+  text-align: left;
+}
+.LTV_line {
+  font-family:Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace;
+  font-size:12px;
+  font-stretch:100%;
+  font-style:normal;
+  font-variant-caps:normal;
+  font-variant-east-asian:normal;
+  font-variant-ligatures:no-common-ligatures;
+  font-variant-numeric:normal;
+  font-weight:400;
+  line-height: 16px;
+  height: 16px;
+}
+
+#LTV_line_template {
+  visibility: hidden;
+}

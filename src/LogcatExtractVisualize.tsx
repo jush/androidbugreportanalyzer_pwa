@@ -4,6 +4,7 @@ import AceEditor from "react-ace";
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/theme-solarized_dark";
 import State from "./State";
+import LongTextViewer from "./LongTextViewer";
 
 type LogcatExtractVisualizeProps = {
   bugreportZip: JSZip;
@@ -108,6 +109,7 @@ class LogcatExtractVisualize extends React.Component<
               value={this.state.maxLines}
               onChange={this.onMaxLinesChanged}
             />
+            <LongTextViewer longText={'ॲ / ऍ 7'+resourceState.value} />
             <AceEditor
               value={resourceState.value}
               width="100%"
