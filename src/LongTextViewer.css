@@ -1,7 +1,54 @@
-.LTV_container {
-  text-align: left;
+.LTV_viewer {
+  position: relative;
+  overflow: hidden;
+  padding: 0px;
+  line-height: normal;
+  direction: ltr;
+  width: 100%;
 }
+#LTV_line_template {
+  visibility: hidden;
+  white-space: nowrap;
+  position: static;
+  display: inline;
+}
+.LTV_scroller {
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  overflow: hidden;
+  display: block;
+  position: absolute;
+  user-select: none;
+  cursor: text;
+}
+.LTV_content {
+  text-align: left;
+  width: 100%;
+  min-width: 100%;
+  position: absolute;
+  will-change: transform;
+  contain: strict;
+}
+
+#LTV_text_layer {
+  height: 1e06px;
+  width: 1e06px;
+  display: block;
+  position: absolute;
+  transform: translate(0px, 0px);
+  overflow: hidden;
+  overflow-wrap: normal;
+  contain: strict;
+  pointer-events: none;
+  user-select: none;
+  white-space: pre;
+  z-index: 1;
+}
+
 .LTV_line {
+  contain: strict;
   font-family:Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace;
   font-size:12px;
   font-stretch:100%;
@@ -13,8 +60,27 @@
   font-weight:400;
   line-height: 16px;
   height: 16px;
+  position: absolute;
+  display: block;
+  top: 0px;
+  right: 0px;
+  left: 0px;
 }
 
-#LTV_line_template {
-  visibility: hidden;
+.LTV_scrollbar {
+  contain: strict;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+}
+.LTV_scrollbar-v {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  top: 0;
+}
+.LTV_scrollbar-h {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  left: 0;
 }

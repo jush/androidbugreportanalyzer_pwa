@@ -1,8 +1,5 @@
 import React from "react";
 import JSZip, { JSZipObject } from "jszip";
-import AceEditor from "react-ace";
-import "ace-builds/src-min-noconflict/ext-searchbox";
-import "ace-builds/src-noconflict/theme-solarized_dark";
 import State from "./State";
 import LongTextViewer from "./LongTextViewer";
 
@@ -109,19 +106,7 @@ class LogcatExtractVisualize extends React.Component<
               value={this.state.maxLines}
               onChange={this.onMaxLinesChanged}
             />
-            <LongTextViewer longText={'ॲ / ऍ 7'+resourceState.value} />
-            <AceEditor
-              value={resourceState.value}
-              width="100%"
-              maxLines={this.state.maxLines}
-              theme="solarized_dark"
-              setOptions={{
-                showGutter: false,
-                showPrintMargin: false,
-                readOnly: true,
-                scrollPastEnd: true,
-              }}
-            />
+            <LongTextViewer longText={resourceState.value} />
           </div>
         )}
         {resourceState.state === "failed" && <h2>{resourceState.message}</h2>}

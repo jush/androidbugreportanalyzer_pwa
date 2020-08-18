@@ -2,7 +2,6 @@ import React from "react";
 import "./App.css";
 import SelectFileForm from "./SelectFileForm";
 import BugreportAnalyzer from "./BugreportAnalyzer";
-import LongTextViewer from "./LongTextViewer";
 
 type AppState = {
   file: File | null;
@@ -28,13 +27,8 @@ class App extends React.Component</*No props*/ {}, AppState> {
         <BugreportAnalyzer file={this.state.file!!} onReset={this.onReset} />
       );
     }
-    const longText = `This is a multi-line
-    text, let's see how it behaves
-    <b>Bold</b>
-    `
     return <div className="App">
       {contents}
-      <div><LongTextViewer longText={longText}/></div>
       </div>;
   }
 }
