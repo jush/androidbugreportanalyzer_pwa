@@ -16,6 +16,7 @@ type LongTextViewerState = {
 };
 
 class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewerState> {
+  private extraLines:number = 2;
   constructor(props: LongTextViewerProps) {
     super(props)
     const lines = this.props.longText.split(/\r\n|\r|\n/)
@@ -53,6 +54,7 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       const positionY = prevState.position.y + deltaY;
       return {
         position: {
+          // TODO: Figure the maximum negative X allowed based on lineWidth and current target width
           x: positionX > 0 ? 0: positionX, 
           y: positionY > 0 ? 0: positionY
         }
@@ -63,8 +65,8 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
   render() {
     const currentLine = this.state.currentLine
     const linesToShow = this.state.linesToShow
-    const lineHeight = this.state.lineHeight;
-    const contents = this.state.longTextLines.slice(currentLine, currentLine+linesToShow+2).map((line, idx) => {
+    const lineHeight = this.state.lineHeight
+    const contents = this.state.longTextLines.slice(currentLine, currentLine+linesToShow+this.extraLines).map((line, idx) => {
       const lineStyle: CSSProperties = {
         top: lineHeight * idx
       }
@@ -74,7 +76,7 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       height: linesToShow * lineHeight + 'px'
     }
     const contentStyle: CSSProperties = {
-      height: linesToShow * lineHeight + 'px',
+      height: (linesToShow + this.extraLines) * lineHeight + 'px',
       width: this.state.lineWidth + 'px',
       transform: 'translate('+this.state.position.x+'px, '+this.state.position.y+'px)'
     }
