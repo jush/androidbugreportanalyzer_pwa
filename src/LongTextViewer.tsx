@@ -29,7 +29,7 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       longTextLines: lines,
       longestLine: longestLine,
       currentLine: 0,
-      linesToShow: 5,
+      linesToShow: 10,
       lineWidth: 0,
       lineHeight: 16,
       position: {x:0,y:0}
