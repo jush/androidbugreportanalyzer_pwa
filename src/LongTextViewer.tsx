@@ -71,7 +71,6 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
   }
 
   onScrollerWheel = (event: React.WheelEvent<HTMLDivElement>): void  => {
-    console.log("onScrollerWheel")
     event.stopPropagation()
     const deltaX = -event.deltaX
     const deltaY = -event.deltaY
