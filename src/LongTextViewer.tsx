@@ -28,9 +28,6 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
     super(props)
     const lines = this.props.longText.split(/\r\n|\r|\n/)
     console.log("Total lines: " + lines.length)
-    console.log("First line: " + lines[0])
-    console.log("Second last line: " + lines[lines.length-2])
-    console.log("Last line: " + lines[lines.length-1])
     const longestLine = lines.reduce((prev, current) => {
       const prevLength = prev.length;
       const currentLength = current.length;
@@ -49,9 +46,8 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
 
   componentDidMount() {
     const templateRect = document.getElementById("LTV_line_template")!!.getBoundingClientRect();
-    console.log ("Document width: " + window.innerWidth)
+    // Add half window so it's easier to read the widest line
     const templateWidth = Math.round(templateRect.width + (window.innerWidth/2))
-    console.log("Template width: " + templateWidth)
     this.setState({
        lineWidth: templateWidth
     })
@@ -80,7 +76,9 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
         position: {
           x: positionX, 
           y: prevState.position.y
-        }
+        },
+        // Reset the longest line, there's no use anymore
+        longestLine: ""
       }
     })
   }
@@ -89,9 +87,13 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
     event.stopPropagation()
     const deltaX = -event.deltaX
     const deltaY = -event.deltaY
-    this.setState((prevState, props) => {
+    const windowWidth = window.innerWidth
+    const scrollBarVWidth = document.getElementById("LTV_scrollbar-v")!!.getBoundingClientRect().width
+    const maxTranslateX = this.state.lineWidth - windowWidth + scrollBarVWidth
+    this.setState((prevState) => {
       var positionX = prevState.position.x + deltaX;
       if (positionX > 0) positionX = 0
+      if (positionX < -maxTranslateX) positionX = -maxTranslateX
       var positionY = prevState.position.y + deltaY;
       if (positionY > 0) positionY = 0
       
