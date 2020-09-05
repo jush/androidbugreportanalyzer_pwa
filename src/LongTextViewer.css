@@ -74,12 +74,12 @@
   bottom: 0;
   z-index: 6;
 }
-.LTV_scrollbar-v {
+#LTV_scrollbar-v {
   overflow-x: hidden;
   overflow-y: scroll;
   top: 0;
 }
-.LTV_scrollbar-h {
+#LTV_scrollbar-h {
   overflow-x: scroll;
   overflow-y: hidden;
   left: 0;

@@ -93,8 +93,14 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       if (positionX > 0) positionX = 0
       var positionY = prevState.position.y + deltaY;
       if (positionY > 0) positionY = 0
-
+      
       var newCurrentLine = Math.floor(Math.abs(positionY) / prevState.lineHeight)
+      
+      // Update the horizontal and vertical scroll bars
+      const scrollBarH = document.getElementById("LTV_scrollbar-h")!!
+      scrollBarH.scrollLeft = -positionX
+      const scrollBarV = document.getElementById("LTV_scrollbar-v")!!
+      scrollBarV.scrollTop = -positionY
       
       return {
         position: {
@@ -157,10 +163,10 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
           </div>
         </div>
       </div>
-      <div className="LTV_scrollbar LTV_scrollbar-v" onScroll={this.onVerticalScrollerScroll}>
+      <div className="LTV_scrollbar" id="LTV_scrollbar-v" onScroll={this.onVerticalScrollerScroll}>
         <div className="LTV_scrollbar-inner" style={scrollbarInnerVertical}>&nbsp;</div>
       </div>
-      <div className="LTV_scrollbar LTV_scrollbar-h" onScroll={this.onHorizontalScrollerScroll}>
+      <div className="LTV_scrollbar" id="LTV_scrollbar-h" onScroll={this.onHorizontalScrollerScroll}>
         <div className="LTV_scrollbar-inner" style={scrollbarInnerHorizontal}>&nbsp;</div>
       </div>
     </div>
