@@ -87,15 +87,19 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
     event.stopPropagation()
     const deltaX = -event.deltaX
     const deltaY = -event.deltaY
-    const windowWidth = window.innerWidth
+
     const scrollBarVWidth = document.getElementById("LTV_scrollbar-v")!!.getBoundingClientRect().width
-    const maxTranslateX = this.state.lineWidth - windowWidth + scrollBarVWidth
+    const maxTranslateX = this.state.lineWidth - window.innerWidth + scrollBarVWidth
+
+    const maxTranslateY = (this.state.longTextLines.length - this.state.linesToShow + this.extraLines) * this.state.lineHeight
+
     this.setState((prevState) => {
       var positionX = prevState.position.x + deltaX;
       if (positionX > 0) positionX = 0
       if (positionX < -maxTranslateX) positionX = -maxTranslateX
       var positionY = prevState.position.y + deltaY;
       if (positionY > 0) positionY = 0
+      if (positionY < -maxTranslateY) positionY = -maxTranslateY
       
       var newCurrentLine = Math.floor(Math.abs(positionY) / prevState.lineHeight)
       
