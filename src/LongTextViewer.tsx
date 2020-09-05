@@ -49,7 +49,8 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
 
   componentDidMount() {
     const templateRect = document.getElementById("LTV_line_template")!!.getBoundingClientRect();
-    const templateWidth = Math.round(templateRect.width)
+    console.log ("Document width: " + window.innerWidth)
+    const templateWidth = Math.round(templateRect.width + (window.innerWidth/2))
     console.log("Template width: " + templateWidth)
     this.setState({
        lineWidth: templateWidth
