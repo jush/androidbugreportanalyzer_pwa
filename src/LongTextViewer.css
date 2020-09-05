@@ -83,4 +83,5 @@
   overflow-x: scroll;
   overflow-y: hidden;
   left: 0;
+  right: 15px;
 }

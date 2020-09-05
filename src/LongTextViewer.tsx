@@ -7,6 +7,7 @@ type LongTextViewerProps = {
 
 type LongTextViewerState = {
   longTextLines: string[]
+  // Used to decide the width for the text container
   longestLine: string
   currentLine: number
   linesToShow: number
@@ -16,10 +17,20 @@ type LongTextViewerState = {
 };
 
 class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewerState> {
-  private extraLines:number = 2;
+  private extraLines:number = 2
+  /**
+   * If we have many many many lines the height can reach absurd numbers that don't work really well for browsers.
+   * So we use this arbitrary maximum height and use module to wrap the different translations/heights used.
+   */
+  private maxHeightPx: number = 5e5
+  
   constructor(props: LongTextViewerProps) {
     super(props)
     const lines = this.props.longText.split(/\r\n|\r|\n/)
+    console.log("Total lines: " + lines.length)
+    console.log("First line: " + lines[0])
+    console.log("Second last line: " + lines[lines.length-2])
+    console.log("Last line: " + lines[lines.length-1])
     const longestLine = lines.reduce((prev, current) => {
       const prevLength = prev.length;
       const currentLength = current.length;
@@ -44,8 +55,23 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
        lineWidth: templateWidth
     })
   }
+  onVerticalScrollerScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>): void => {
+    event.stopPropagation()
+    const positionY = -event.currentTarget.scrollTop
+    this.setState((prevState)=>{
+      var newCurrentLine = Math.floor(Math.abs(positionY) / prevState.lineHeight)
+      return {
+        position: {
+          x: prevState.position.x, 
+          y: positionY
+        },
+        currentLine: newCurrentLine
+      }
+    })
+  }
 
   onScrollerWheel = (event: React.WheelEvent<HTMLDivElement>): void  => {
+    console.log("onScrollerWheel")
     event.stopPropagation()
     const deltaX = -event.deltaX
     const deltaY = -event.deltaY
@@ -55,7 +81,6 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       var positionY = prevState.position.y + deltaY;
       if (positionY > 0) positionY = 0
 
-      const currentLinePosY = prevState.currentLine * prevState.lineHeight + prevState.lineHeight
       var newCurrentLine = Math.floor(Math.abs(positionY) / prevState.lineHeight)
       
       return {
@@ -73,12 +98,18 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
     const currentLine = this.state.currentLine
     const linesToShow = this.state.linesToShow
     const lineHeight = this.state.lineHeight
+    // Let's calculate the top position in pixels of the first line to show. Taking into account that
+    // we have to wrap at this.maxHeightPx
+    const topLinePx = (lineHeight * currentLine) % this.maxHeightPx
+
+    // Le'ts build each line as a div where its `top` is translated from the top line based on its index
     const contents = this.state.longTextLines.slice(currentLine, currentLine+linesToShow+this.extraLines).map((line, idx) => {
       const lineStyle: CSSProperties = {
-        top: lineHeight * (currentLine + idx)
+        top: topLinePx + (lineHeight * idx)
       }
       return <div className="LTV_line" id={'LTV_line_'+(currentLine+idx)} key={idx} style={lineStyle}>{line}</div>
     })
+
     const viewerStyle: CSSProperties = {
       height: linesToShow * lineHeight + 'px'
     }
@@ -88,10 +119,13 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       transform: 'translate('+this.state.position.x + 'px, '+this.state.position.y % lineHeight +'px)'
     }
     const textLayerStyle: CSSProperties = {
-      transform: 'translate(0px, -'+lineHeight * currentLine+'px)'
+      transform: 'translate(0px, -'+ topLinePx +'px)'
     }
-    const scrollbarInnerVertical = {
-      height: this.state.longTextLines.length / linesToShow * lineHeight + 'px',
+
+    // We add this.extraLines to allow the vertical scrollbar to scroll some extra empty lines
+    const totalHeight = (this.state.longTextLines.length + this.extraLines) * lineHeight + "px"
+    const scrollbarInnerVertical: React.CSSProperties = {
+      height: totalHeight,
       width: 20+'px'
     }
     const scrollbarInnerHorizontal = {
@@ -100,17 +134,17 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
     }
     return <div>
       {this.state.lineWidth === 0 &&
-            <div className="LTV_line" id="LTV_line_template">{this.state.longestLine}</div>
+        <div className="LTV_line" id="LTV_line_template">{this.state.longestLine}</div>
       }
     <div className="LTV_viewer" style={viewerStyle}>
-      <div className="LTV_scroller" onWheel={this.onScrollerWheel}>
+      <div className="LTV_scroller" onWheel={this.onScrollerWheel} >
         <div className="LTV_content" style={contentStyle}>
           <div id="LTV_text_layer" style={textLayerStyle}>
             {contents}
           </div>
         </div>
       </div>
-      <div className="LTV_scrollbar LTV_scrollbar-v">
+      <div className="LTV_scrollbar LTV_scrollbar-v" onScroll={this.onVerticalScrollerScroll}>
         <div className="LTV_scrollbar-inner" style={scrollbarInnerVertical}>&nbsp;</div>
       </div>
       <div className="LTV_scrollbar LTV_scrollbar-h">
