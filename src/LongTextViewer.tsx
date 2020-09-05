@@ -55,6 +55,7 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
        lineWidth: templateWidth
     })
   }
+
   onVerticalScrollerScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>): void => {
     event.stopPropagation()
     const positionY = -event.currentTarget.scrollTop
@@ -66,6 +67,19 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
           y: positionY
         },
         currentLine: newCurrentLine
+      }
+    })
+  }
+
+  onHorizontalScrollerScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>): void => {
+    event.stopPropagation()
+    const positionX = -event.currentTarget.scrollLeft
+    this.setState((prevState)=>{
+      return {
+        position: {
+          x: positionX, 
+          y: prevState.position.y
+        }
       }
     })
   }
@@ -146,7 +160,7 @@ class LongTextViewer extends React.Component<LongTextViewerProps, LongTextViewer
       <div className="LTV_scrollbar LTV_scrollbar-v" onScroll={this.onVerticalScrollerScroll}>
         <div className="LTV_scrollbar-inner" style={scrollbarInnerVertical}>&nbsp;</div>
       </div>
-      <div className="LTV_scrollbar LTV_scrollbar-h">
+      <div className="LTV_scrollbar LTV_scrollbar-h" onScroll={this.onHorizontalScrollerScroll}>
         <div className="LTV_scrollbar-inner" style={scrollbarInnerHorizontal}>&nbsp;</div>
       </div>
     </div>
